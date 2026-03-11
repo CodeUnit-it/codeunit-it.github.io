@@ -1,4 +1,48 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // --- LÓGICA DEL THEME TOGGLE ---
+    const themeToggle = document.getElementById("theme-toggle");
+    const html = document.documentElement;
+    const themeIcon = themeToggle.querySelector("i");
+
+    // Cargar tema guardado o detectar preferencia del sistema
+    const savedTheme = localStorage.getItem("theme");
+    const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const initialTheme = savedTheme || (systemPrefersDark ? "dark" : "light");
+
+    // Aplicar tema inicial
+    html.setAttribute("data-theme", initialTheme);
+    updateThemeIcon(initialTheme);
+
+    // Toggle theme al hacer clic
+    themeToggle.addEventListener("click", () => {
+        const currentTheme = html.getAttribute("data-theme");
+        const newTheme = currentTheme === "light" ? "dark" : "light";
+
+        html.setAttribute("data-theme", newTheme);
+        localStorage.setItem("theme", newTheme);
+        updateThemeIcon(newTheme);
+    });
+
+    // Función para actualizar el icono
+    function updateThemeIcon(theme) {
+        if (theme === "dark") {
+            themeIcon.classList.remove("fa-moon");
+            themeIcon.classList.add("fa-sun");
+        } else {
+            themeIcon.classList.remove("fa-sun");
+            themeIcon.classList.add("fa-moon");
+        }
+    }
+
+    // Detectar cambios en la preferencia del sistema
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+        if (!localStorage.getItem("theme")) {
+            const newTheme = e.matches ? "dark" : "light";
+            html.setAttribute("data-theme", newTheme);
+            updateThemeIcon(newTheme);
+        }
+    });
+
     // --- LÓGICA DEL CARRUSEL INFINITO ---
     const track = document.getElementById("track");
 
